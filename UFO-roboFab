@@ -2,46 +2,94 @@
 """ Simple Load Font Example
 http://www.robodocs.info/roboFabDocs/source/howtos/world.html#openfont-path
 
-This script open a UFO file from first argument.
-note: $ pip install robofab
+This script open a UFO file from first argument (whthout any GUI junk).
+note:
+
+$ pip install robofab
+
 """
 
-import argparse, robofab
-from robofab.world import RFont
+from robofab.world import RFont, RGlyph
+from fontTools.misc.transform import Identity
+import argparse, robofab, math, sys
+
+######
+# Args handling 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-	"ufo", 
-	help = "the UFO file to process"
+	"ufo_in",
+	help = "the ufo file to process"
 )
 parser.add_argument(
-	"-v", "--verbose", 
+	"ufo_out",
+	help = "the ufo file to save"
+)
+parser.add_argument(
+	"-v", "--verbose",
 	help = "increase output verbosity",
 	action = "store_true"
 )
 args = parser.parse_args()
 
-
-path = args.ufo
-
-f = RFont(path)
-print "The current font is {}".format(f.info.postscriptFullName)
+path = args.ufo_in
 
 
-# so now f is the name of a font object for the current font.
+######
+# Trigonometry 
 
-if f == None:
-	# let's see what dialog can do, a warning
+matrix = Identity
+matrix = matrix.rotate(math.radians(45))
+
+
+######
+# Font load and gliph Process
+
+font = RFont(path)
+print "The current font is:",font.info.postscriptFullName
+
+
+if font == None:
 	print "You should open a font first, there's nothing to look at now!"
 else:
 	if args.verbose:
 		# let's have a look at some of the attributes a RoboFab Font object has
-		print "the number of glyphs:", len(f)
-		# some of the attributes map straight to the FontLab Font class
-		# We just straightened the camelCase here and there
-		print "full name of this font:", f.info.postscriptFullName
-		print 'ascender:', f.info.ascender
-		print 'descender:', f.info.descender
+		print "the number of glyphs:", len(font)
+		print "full name of this font:", font.info.postscriptFullName
+		print 'ascender:', font.info.ascender
+		print 'descender:', font.info.descender
 
 print '-----'
-print "list of glyph names:", f.keys()
+print "list of glyph names:", font.keys()
+print '-----'
+#for key in font:
+for glyph in font:
+	# print vars(glyph)
+	print glyph.name
+	glyph.transform(matrix)
+
+font.save(args.ufo_in)
+
+
+
+# Borrar Curvas:
+
+# for g in [glyph.name for glyph in font]:
+#     old = font[g]
+#     print len(old)
+#     new = font.newGlyph("dummytmp", clear=True)
+# 
+# 
+#     pen = new.getPointPen()
+#     for contour in old:
+#         pen.beginPath()
+#         for point in contour.points:
+#             if point.type != "offCurve":
+#                 pen.addPoint((point.x,point.y),"line")
+#         pen.endPath()
+# 
+# 
+#     font.newGlyph(g, clear=True)
+#     old.appendGlyph(new)
+# font.removeGlyph("dummytmp")
+# font.update()
