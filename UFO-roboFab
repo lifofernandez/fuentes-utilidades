@@ -68,7 +68,7 @@ for glyph in font:
 	print glyph.name
 	glyph.transform(matrix)
 
-font.save(args.ufo_in)
+font.save(args.ufo_out)
 
 
 

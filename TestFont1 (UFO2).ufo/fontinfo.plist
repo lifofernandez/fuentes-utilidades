@@ -76,11 +76,6 @@
 		<integer>0</integer>
 		<integer>1</integer>
 	</array>
-	<key>openTypeOS2FamilyClass</key>
-	<array>
-		<integer>1</integer>
-		<integer>1</integer>
-	</array>
 	<key>openTypeOS2Panose</key>
 	<array>
 		<integer>0</integer>
@@ -93,6 +88,11 @@
 		<integer>7</integer>
 		<integer>8</integer>
 		<integer>9</integer>
+	</array>
+	<key>openTypeOS2FamilyClass</key>
+	<array>
+		<integer>1</integer>
+		<integer>1</integer>
 	</array>
 	<key>openTypeOS2Selection</key>
 	<array>
@@ -236,3 +236,4 @@
 	<integer>2008</integer>
 </dict>
 </plist>
+
