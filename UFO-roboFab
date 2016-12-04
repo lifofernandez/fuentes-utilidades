@@ -2,10 +2,10 @@
 """ Simple Load Font Example
 http://www.robodocs.info/roboFabDocs/source/howtos/world.html#openfont-path
 
-This script open a UFO file from first argument (whthout any GUI junk).
-note:
+Some process in UFO fonts (whthout any GUI junk).
 
-$ pip install robofab
+note:
+$ pip install fonttols robofab
 
 """
 

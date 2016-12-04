@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+""" Gliph Plot 
+
+Some monitroing UFO glyph plot (whthout any GUI junk).
+
+lisandro fernandez
+
+"""
+
+from robofab.world import RFont, RGlyph
+import argparse, robofab, math, sys
+import matplotlib.pyplot as pyplot
+from matplotlib.path import Path
+import matplotlib.patches as patches
+
+######
+# robofab point type to matplotlib path code maping
+# http://matplotlib.org/api/path_api.html
+
+pType2cCode = {
+	'stop': 0,
+	'move': 1,
+	'line': 2,
+	# 'offcurve': 3,
+	'offcurve': 4,
+	'curve': 4,
+	'close': 79,
+}
+print pType2cCode['stop']
+
+######
+# Args handling 
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+	"ufo_in",
+	help = "the ufo file to process"
+)
+parser.add_argument(
+	"-v", "--verbose",
+	help = "increase output verbosity",
+	action = "store_true"
+)
+args = parser.parse_args()
+
+path = args.ufo_in
+
+
+######
+# Font load and gliph Process
+
+font = RFont(path)
+print "The current font is:",font.info.postscriptFullName
+
+
+if font == None:
+	print "You should open a font first, there's nothing to look at now!"
+else:
+	if args.verbose:
+		print "the number of glyphs:", len(font)
+		print "full name of this font:", font.info.postscriptFullName
+		print 'ascender:', font.info.ascender
+		print 'descender:', font.info.descender
+
+print '-----'
+print "list of glyph names:", font.keys()
+print '-----'
+#for key in font:
+for glyph in font:
+	# print vars(glyph)
+	print glyph.name
+
+# Borrar Curvas:
+
+for g in [glyph.name for glyph in font]:
+	old = font[g]
+	print '-----'
+	print g, len(old)
+	
+	
+	pen = old.getPointPen()
+	for contour in old:
+		# pen.beginPath()
+		# for segment in contour:
+		path_data = []
+		for point in contour.points:
+			#if point.type != "offCurve":
+			pathCode = pType2cCode[point.type]
+			p = (pathCode, (point.x,point.y))
+			path_data.append(p);
+			print p
+			# print  pathCode, point.x,':',point.y
+			# print vars(point)
+		# pen.endPath()
+
+
+
+
+fig, ax = pyplot.subplots()
+
+
+codes, verts = zip(*path_data)
+path = Path(verts, codes)
+patch = patches.PathPatch(path, facecolor='r', alpha=0.5)
+ax.add_patch(patch)
+
+# plot control points and connecting lines
+x, y = zip(*path.vertices)
+line, = ax.plot(x, y, 'go-')
+
+ax.grid()
+ax.axis('equal')
+pyplot.show()
+
