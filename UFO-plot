@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-""" Gliph Plot 
+""" Glyph Plot
 
-Some monitroing UFO glyph plot (whthout any GUI junk).
-
-lisandro fernandez
+Some UFO monitoring
+por: lisandro fernandez
 
 """
 
@@ -13,6 +12,7 @@ import matplotlib.pyplot as pyplot
 from matplotlib.path import Path
 import matplotlib.patches as patches
 
+
 ######
 # robofab point type to matplotlib path code maping
 # http://matplotlib.org/api/path_api.html
@@ -21,11 +21,12 @@ pType2cCode = {
 	'stop': 0,
 	'move': 1,
 	'line': 2,
-	# 'offcurve': 3,
-	'offcurve': 4,
+	'offcurve': 3,
+	#'offcurve': 4,
 	'curve': 4,
 	'close': 79,
 }
+
 
 ######
 # Args handling 
@@ -54,27 +55,25 @@ g = args.glyph
 # Font load and gliph Process
 
 font = RFont(path)
-print "The current font is:",font.info.postscriptFullName
 
 
 if font == None:
 	print "You should open a font first, there's nothing to look at now!"
 else:
+	print "The current font is:",font.info.postscriptFullName
 	if args.verbose:
 		print "the number of glyphs:", len(font)
 		print "full name of this font:", font.info.postscriptFullName
 		print 'ascender:', font.info.ascender
 		print 'descender:', font.info.descender
+		print '-----'
+		print "list of glyph names:", font.keys()
+		print '-----'
 
-if not args.glyph:
-	print '-----'
-	print "list of glyph names:", font.keys()
-	print '-----'
-else:
 # for g in [glyph.name for glyph in font]:
 
 	glyph = font[g]
-	print 'Glypho:', g, len(glyph)
+	print 'Glypho:', g 
 	
 	pen = glyph.getPointPen()
 	for contour in glyph:
@@ -83,14 +82,22 @@ else:
 			pathCode = pType2cCode[point.type]
 			p = (pathCode, (point.x,point.y))
 			path_data.append(p);
-			if args.verbose: print p
+			if args.verbose:
+				print point.type+':', point.x,point.y
 
+
+######
+# matplotlib stuff
 
 fig, ax = pyplot.subplots()
 
 codes, verts = zip(*path_data)
 path = Path(verts, codes)
-patch = patches.PathPatch(path, facecolor='r', alpha=0.5)
+patch = patches.PathPatch(
+	path,
+	facecolor='r',
+	alpha=0.5
+)
 ax.add_patch(patch)
 
 # plot control points and connecting lines
