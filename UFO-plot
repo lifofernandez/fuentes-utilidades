@@ -76,7 +76,6 @@ else:
 		print "list of glyph names:", font.keys()
 		print '-----'
 
-# for g in [glyph.name for glyph in font]:
 
 glyph = font[g]
 print 'Glypho:', g
@@ -111,8 +110,8 @@ colors = 100 * np.random.rand( len( PATCHES ) )
 
 c = PatchCollection(
 	PATCHES,
-	cmap=matplotlib.cm.jet,
-	alpha=0.4
+	cmap  = matplotlib.cm.jet,
+	alpha = 0.4
 )
 c.set_array(
 	np.array( colors )
@@ -129,4 +128,3 @@ ax.axis( 'equal' )
 	# 
 
 pyplot.show()
-
