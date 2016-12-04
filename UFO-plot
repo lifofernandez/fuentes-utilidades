@@ -10,8 +10,9 @@ from robofab.world import RFont, RGlyph
 import argparse, robofab, math, sys
 import matplotlib.pyplot as pyplot
 from matplotlib.path import Path
-import matplotlib.patches as patches
 
+import matplotlib.patches as patches
+# http://matplotlib.org/api/patches_api.html#matplotlib.patches.PathPatch
 
 ######
 # robofab point type to matplotlib path code maping
@@ -74,11 +75,10 @@ else:
 
 	glyph = font[g]
 	print 'Glypho:', g
-	
-	pen = glyph.getPointPen()
+	print 'Contornos:', len(glyph.contours)
 	for contour in glyph:
+
 		path_data = []
-		print vars( contour )
 		for point in contour.points:
 			pathCode = pType2cCode[point.type]
 			p = (pathCode, (point.x,point.y))
@@ -86,15 +86,15 @@ else:
 			if args.verbose:
 				print point.type+':', point.x,point.y
 
-######
-# matplotlib stuff
+		######
+		# matplotlib stuff
 
 		fig, ax = pyplot.subplots()
 
 		codes, verts = zip( * path_data )
 		path = Path(
 			verts,
-			codes 
+			codes
 		)
 		patch = patches.PathPatch(
 			path,
@@ -104,8 +104,10 @@ else:
 		ax.add_patch( patch )
 
 	# plot control points and connecting lines
+	# TO DO: separar putos, mejorar represenatacion
 		x, y = zip( * path.vertices )
-		line = ax.plot( x, y, 'go-' )
+		#line = ax.plot( x, y, 'go-' )
+		line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
 		
 		ax.grid()
 		ax.axis( 'equal' )
