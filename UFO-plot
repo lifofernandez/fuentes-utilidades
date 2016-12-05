@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """ Glyph Plot
 
 Some UFO monitoring
@@ -6,10 +6,10 @@ por: lisandro fernandez
 
 """
 
-from robofab.world import RFont, RGlyph
 
 import numpy as np
 import argparse, robofab, math, sys
+from robofab.world import RFont, RGlyph
 
 import matplotlib
 import matplotlib.pyplot as pyplot
@@ -80,7 +80,12 @@ else:
 glyph = font[g]
 print 'Glypho:', g
 print 'Contornos:', len( glyph.contours )
+print 'Extra Components:', len( glyph.components)
 
+for component in glyph.components:
+    print component._baseGlyph
+    print vars(component)
+print '-----'
 
 fig, ax = pyplot.subplots()
 PATCHES = []
@@ -120,11 +125,11 @@ ax.add_collection( c )
 ax.grid()
 ax.axis( 'equal' )
 
-	# # Control Points and connecting lines
-	# # TO DO: separar putos, mejorar represenatacion
-	# x, y = zip( * path.vertices )
-	# # line = ax.plot( x, y, 'go-' )
-	# line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
-	# 
+# # Control Points and connecting lines
+# # TO DO: separar putos, mejorar represenatacion
+# x, y = zip( * path.vertices )
+# # line = ax.plot( x, y, 'go-' )
+# line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
+# 
 
 pyplot.show()

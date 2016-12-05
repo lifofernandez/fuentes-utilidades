@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """ Simple Load Font Example
 http://www.robodocs.info/roboFabDocs/source/howtos/world.html#openfont-path
 
