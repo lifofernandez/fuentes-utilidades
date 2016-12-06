@@ -123,9 +123,9 @@ def plotear_glifo(
 			pathResultado = [
 				( v1 + v2 ) * v3 for
 				v1, v2, v3 in
-					zip(
-						pathVert, offset, scale
-					)
+				zip(
+					pathVert, offset, scale
+				)
 			]
 			VERTS.append( pathResultado );
 			pathCode = pType2cCode[point.type]
@@ -151,9 +151,9 @@ def plotear_glifo(
 		componentOffset = [
 			( v1 + v2 ) for
 			v1, v2, in
-				zip(
-					component._offset, offset
-				)
+			zip(
+				component._offset, offset
+			)
 		]
 		componentScale  = component._scale
 		
