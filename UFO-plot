@@ -9,15 +9,15 @@ por: lisandro fernandez
 
 import numpy as np
 import argparse, robofab, math, sys
-from robofab.world import RFont, RGlyph
+from robofab.world import RFont
 
 import matplotlib
-import matplotlib.pyplot as pyplot
+from matplotlib.pyplot import figure, show
 
 from matplotlib.path import Path
 import matplotlib.patches as patches
 from matplotlib.collections import PatchCollection
-# http://matplotlib.org/api/patches_api.html#matplotlib.patches.PathPatch
+# http://matplotlib.org/api/CONTOURS_api.html#matplotlib.patches.PathPatch
 
 ######
 # robofab point type to matplotlib path code maping
@@ -35,7 +35,7 @@ pType2cCode = {
 
 
 ######
-# Args handling 
+# Args handling
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -53,83 +53,120 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-path = args.ufo_in
-g = args.glyph
+ufo_path = args.ufo_in
+glyph_name = args.glyph
 
 
 ######
 # Font load and path plot
-
-font = RFont(path)
-
-
-if font == None:
-	print "You should open a font first, there's nothing to look at now!"
-else:
-	print "The current font is:",font.info.postscriptFullName
-	if args.verbose:
-		print "the number of glyphs:", len(font)
-		print "full name of this font:", font.info.postscriptFullName
-		print 'ascender:', font.info.ascender
-		print 'descender:', font.info.descender
-		print '-----'
-		print "list of glyph names:", font.keys()
-		print '-----'
-
-
-glyph = font[g]
-print 'Glypho:', g
-print 'Contornos:', len( glyph.contours )
-print 'Extra Components:', len( glyph.components)
-
-for component in glyph.components:
-    print component._baseGlyph
-    print vars(component)
-print '-----'
-
-fig, ax = pyplot.subplots()
-PATCHES = []
-for contour in glyph:
-
-	POINTS = []
-	for point in contour.points:
-		pathCode = pType2cCode[point.type]
-		p = ( pathCode, ( point.x, point.y ) )
-		POINTS.append( p );
+def main():
+	font = RFont(ufo_path)
+	
+	
+	if font == None:
+		print "You should open a font first, there's nothing to look at now!"
+	else:
+		print "The current font is:",font.info.postscriptFullName
 		if args.verbose:
-			print point.type+':', point.x, point.y
-
-	codes, verts = zip( * POINTS )
-	path = Path(
-		verts,
-		codes
+			print "the number of glyphs:", len(font)
+			print "full name of this font:", font.info.postscriptFullName
+			print 'ascender:', font.info.ascender
+			print 'descender:', font.info.descender
+			print '-----'
+			print "list of glyph names:", font.keys()
+			print '-----'
+	
+	
+	
+	fig = figure()
+	#ax = fig.subplot()
+	# ax = fig.add_subplot(111, xlim=(0,1), ylim=(0,1), autoscale_on=False)
+	ax = fig.add_subplot(
+		111,
+	#	xlim=(0,1),
+	#	ylim=(0,1),
+	#	autoscale_on=False
 	)
-	patch = patches.PathPatch(
-		path,
-		facecolor = 'r',
-		alpha = 0.5
+	
+	
+	
+	glyph = font[glyph_name]
+
+	plotear_glifo(glyph, (0,0), ax, font)
+
+
+	ax.grid()
+	ax.axis( 'equal' )
+	
+	
+	show()
+
+def plotear_glifo(self, offset, subplot, font):
+	offsetX, offsetY = offset
+
+	for component in self.components:
+		print '+',component._baseGlyph
+		componentName =  component._baseGlyph
+		componentOffset = component._offset
+		# RECURSION ACA
+		componentnGlyph = font[componentName]
+		plotear_glifo(componentnGlyph, componentOffset, subplot, font)
+		# print vars(component)
+	print '+-----'
+	
+	print 'Glypho:', self.name
+	print 'Contornos:', len( self.contours )
+	print '+ Components:', len( self.components)
+	print '+ offset x', offsetX
+
+	#CONOTURS [patches]
+	CONTOURS = []
+	for contour in self:
+	
+		#POINTS [p]
+		POINTS = []
+		for point in contour.points:
+			pathCode = pType2cCode[point.type]
+			p = (
+				pathCode,
+				(
+					point.x + offsetX,
+					point.y + offsetY
+				)
+			)
+			POINTS.append( p );
+			# # Control Points and connecting lines
+			# # TO DO: separar putos, mejorar represenatacion
+			# x, y = zip( * path.vertices )
+			# # line = ax.plot( x, y, 'go-' )
+			# line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
+			if args.verbose:
+				print point.type+':', point.x, point.y
+	
+		codes, verts = zip( * POINTS )
+		path = Path(
+			verts,
+			codes
+		)
+		patch = patches.PathPatch(
+			path,
+			facecolor = 'r',
+			alpha = 0.5
+		)
+		CONTOURS.append( patch )
+	
+	
+	
+	collection = PatchCollection(
+		CONTOURS,
+		cmap  = matplotlib.cm.jet,
+		alpha = 0.4
 	)
-	PATCHES.append( patch )
+	# colors = 100 * np.random.rand( len( CONTOURS ) )
+	# colection.set_array(
+	# 	np.array( colors )
+	# )
+	subplot.add_collection( collection )
+	# termina  func: agregar_glifo #####
 
-colors = 100 * np.random.rand( len( PATCHES ) )
-
-c = PatchCollection(
-	PATCHES,
-	cmap  = matplotlib.cm.jet,
-	alpha = 0.4
-)
-c.set_array(
-	np.array( colors )
-)
-ax.add_collection( c )
-ax.grid()
-ax.axis( 'equal' )
-
-# # Control Points and connecting lines
-# # TO DO: separar putos, mejorar represenatacion
-# x, y = zip( * path.vertices )
-# # line = ax.plot( x, y, 'go-' )
-# line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
-# 
-
-pyplot.show()
+main()
