@@ -118,16 +118,14 @@ def plotear_glifo(
 		CODES = []
 		VERTS = []
 		for point in contour.points:
-			pathVert = ( point.x, point.y )
-			# tengo que guardar/calcular ofset de los subsubglifos
+			pathVert      = ( point.x, point.y )
 			pathResultado = [
 				( v1 + v2 ) * v3 for
 				v1, v2, v3 in
-				zip(
-					pathVert, offset, scale
-				)
+				zip( pathVert, offset, scale )
 			]
 			VERTS.append( pathResultado );
+			
 			pathCode = pType2cCode[point.type]
 			CODES.append( pathCode );
 			
@@ -151,11 +149,13 @@ def plotear_glifo(
 		componentOffset = [
 			( v1 + v2 ) for
 			v1, v2, in
-			zip(
-				component._offset, offset
-			)
+			zip( component._offset, offset )
 		]
-		componentScale  = component._scale
+		componentScale  = [
+			( v1 * v2 ) for
+			v1, v2, in
+			zip( component._scale, scale )
+		]
 		
 		plotear_glifo(
 			componentnGlyph,
