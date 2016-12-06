@@ -60,9 +60,9 @@ glyph_name = args.glyph
 ######
 # Font load and path plot
 def main():
+
 	font = RFont(ufo_path)
-	
-	
+
 	if font == None:
 		print "You should open a font first, there's nothing to look at now!"
 	else:
@@ -77,76 +77,65 @@ def main():
 			print '-----'
 	
 	
-	
 	fig = figure()
-	#ax = fig.subplot()
-	# ax = fig.add_subplot(111, xlim=(0,1), ylim=(0,1), autoscale_on=False)
 	ax = fig.add_subplot(
 		111,
-	#	xlim=(0,1),
-	#	ylim=(0,1),
-	#	autoscale_on=False
+		# xlim=(0,1),
+		# ylim=(0,1),
+		# autoscale_on=False
+	)
+	glyph = font[glyph_name]
+	
+	plotear_glifo(
+		glyph,
+		ax,
+		font
 	)
 	
-	
-	
-	glyph = font[glyph_name]
-
-	plotear_glifo(glyph, (0,0), ax, font)
-
-
 	ax.grid()
 	ax.axis( 'equal' )
 	
-	
 	show()
 
-def plotear_glifo(self, offset, subplot, font):
-	offsetX, offsetY = offset
-
-	for component in self.components:
-		print '+',component._baseGlyph
-		componentName =  component._baseGlyph
-		componentOffset = component._offset
-		# RECURSION ACA
-		componentnGlyph = font[componentName]
-		plotear_glifo(componentnGlyph, componentOffset, subplot, font)
-		# print vars(component)
-	print '+-----'
+def plotear_glifo(
+	self,
+	subplot,
+	font,
+	offset = (0,0),
+	scale = (1,1)
+):
 	
-	print 'Glypho:', self.name
-	print 'Contornos:', len( self.contours )
-	print '+ Components:', len( self.components)
-	print '+ offset x', offsetX
-
-	#CONOTURS [patches]
+	print 'Glyph:',self.name
+	print '* Contornos:',len( self.contours )
+	print '* + Components:',len( self.components)
+	print '* offset:',offset
+	print '* scale:',scale
+	print '* -----'
+	
 	CONTOURS = []
 	for contour in self:
-	
-		#POINTS [p]
-		POINTS = []
+		
+		CODES = []
+		VERTS = []
 		for point in contour.points:
+			pathVert = ( point.x, point.y )
+			pathResultado = [
+				( v1 + v2 ) * v3 for
+				v1, v2, v3 in
+					zip(
+						pathVert, offset, scale
+					)
+			]
+			VERTS.append( pathResultado );
 			pathCode = pType2cCode[point.type]
-			p = (
-				pathCode,
-				(
-					point.x + offsetX,
-					point.y + offsetY
-				)
-			)
-			POINTS.append( p );
-			# # Control Points and connecting lines
-			# # TO DO: separar putos, mejorar represenatacion
-			# x, y = zip( * path.vertices )
-			# # line = ax.plot( x, y, 'go-' )
-			# line = ax.plot(x, y, 'x--', lw=2, color='black', ms=10)
+			CODES.append( pathCode );
+			
 			if args.verbose:
 				print point.type+':', point.x, point.y
-	
-		codes, verts = zip( * POINTS )
+		
 		path = Path(
-			verts,
-			codes
+			VERTS,
+			CODES
 		)
 		patch = patches.PathPatch(
 			path,
@@ -155,6 +144,22 @@ def plotear_glifo(self, offset, subplot, font):
 		)
 		CONTOURS.append( patch )
 	
+	for component in self.components:
+		componentName   = component._baseGlyph
+		componentnGlyph = font[componentName]
+		componentOffset = component._offset
+		componentScale  = component._scale
+		
+		plotear_glifo(
+			componentnGlyph,
+			subplot,
+			font,
+			componentOffset,
+			componentScale
+		)
+		
+		if args.verbose:
+			print vars(component)
 	
 	
 	collection = PatchCollection(
@@ -167,6 +172,6 @@ def plotear_glifo(self, offset, subplot, font):
 	# 	np.array( colors )
 	# )
 	subplot.add_collection( collection )
-	# termina  func: agregar_glifo #####
+
 
 main()
