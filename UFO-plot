@@ -119,6 +119,7 @@ def plotear_glifo(
 		VERTS = []
 		for point in contour.points:
 			pathVert = ( point.x, point.y )
+			# tengo que guardar/calcular ofset de los subsubglifos
 			pathResultado = [
 				( v1 + v2 ) * v3 for
 				v1, v2, v3 in
@@ -147,7 +148,13 @@ def plotear_glifo(
 	for component in self.components:
 		componentName   = component._baseGlyph
 		componentnGlyph = font[componentName]
-		componentOffset = component._offset
+		componentOffset = [
+			( v1 + v2 ) for
+			v1, v2, in
+				zip(
+					component._offset, offset
+				)
+		]
 		componentScale  = component._scale
 		
 		plotear_glifo(
