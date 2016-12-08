@@ -164,7 +164,7 @@ def plotear_glifo(
 
 
 ######
-# robofab point type to matplotlib path code maping
+# robofab point type to matplotlib path code
 # http://matplotlib.org/api/path_api.html
 
 pType2pCode = {
