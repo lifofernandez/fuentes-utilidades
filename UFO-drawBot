@@ -1,0 +1,176 @@
+#!/usr/bin/env python2
+""" Glyph Plot
+
+Ufo to DrawBot Paths
+Prints a a glyph in code than drawbot can run
+
+Usage:
+$ ./UFO-drawBot file.ufo glyph-name > somedrawbotcode.py
+
+por: lisandro fernandez
+
+"""
+
+
+import numpy as np
+import argparse, robofab, math, sys
+from robofab.world import RFont
+
+
+
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+	"ufo_in",
+	help = "the ufo file to process"
+)
+parser.add_argument(
+	"glyph",
+	help = "the glyph to print for DrawBot"
+)
+parser.add_argument(
+	"-v", "--verbose",
+	help = "increase output verbosity",
+	action = "store_true"
+)
+args = parser.parse_args()
+
+# CONSTANTS
+ufo_path   = args.ufo_in
+glyph_name = args.glyph
+
+
+def main():
+
+	font = RFont(ufo_path)
+
+	if font == None:
+		print "You should open a font first, there's nothing to look at now!"
+	else:
+		print '#####'
+		print "# Font:",font.info.postscriptFullName
+		print '# Glyph:', glyph_name,'\n'
+		if args.verbose:
+			print "# the number of glyphs:", len(font)
+			print "# full name of this font:", font.info.postscriptFullName
+			print '# ascender:', font.info.ascender
+			print '# descender:', font.info.descender
+			print '#####'
+			print '# list of glyph names:', font.keys()
+			print '#####'
+
+
+	glyph = font[glyph_name]
+
+	plotear_glifo(
+		glyph,
+		font
+	)
+
+
+
+# Subs
+
+def plotear_glifo(
+	self,
+	font,
+	offset = (0,0),
+	scale = (1,1)
+):
+	# print '# Contornos:',len( self.contours )
+	# print '# + Components:',len( self.components)
+	# print '# offset:',offset
+	# print '# scale:',scale
+	# print '# -----'
+
+	CONTOURS = []
+	for contour in self:
+
+		CODIGOS = [] # para drawbot
+		VERTS = []
+		for point in contour.points:
+			# dirty fix: vertical offset
+			pathVert      = ( point.x, point.y + 200 ) 
+			pathResultado = tuple(
+				( v1 + v2 ) * v3 for
+				v1, v2, v3 in
+				zip( pathVert, offset, scale )
+			)
+			VERTS.append( pathResultado );
+
+			pathCode = pType2pCode[point.type]
+			CODIGOS.append( pathCode )
+		
+		# DroBote path string 
+		# Dirty and raw implemntation
+		print '# PATH', self.name, '#####'
+		print 'newPath()'
+		curveCounter = 0
+		for index, vertice in enumerate(VERTS):
+			if CODIGOS[index] == 3: # NO curva
+				curveCounter += 1
+			# curveOrder = curveCounter % 2 
+			# print vertice, '# control', curveOrder
+			elif CODIGOS[index] == 4: # NO curva
+
+				print pType2drawBotPath[CODIGOS[index]]+'('
+				print '  ',repr(VERTS[index-2])+', # cntrl pt 1'
+				print '  ',repr(VERTS[index-1])+', # cntrl pt 2'
+				print '  ',vertice
+				print ')'
+			else:
+				print pType2drawBotPath[CODIGOS[index]]+'('
+				print '  ',vertice
+				print ')'
+		print 'closePath()'
+		print 'drawPath()'
+		print '# END #####\n'
+
+	for component in self.components:
+		componentName   = component._baseGlyph
+		componentnGlyph = font[componentName]
+		componentOffset = [
+			( v1 + v2 ) for
+			v1, v2, in
+			zip( component._offset, offset )
+		]
+		componentScale  = [
+			( v1 * v2 ) for
+			v1, v2, in
+			zip( component._scale, scale )
+		]
+
+		plotear_glifo(
+			componentnGlyph,
+			font,
+			componentOffset,
+			componentScale
+		)
+
+		if args.verbose:
+			print vars(component)
+
+pType2drawBotPath = {
+		0: 'newPath',
+		1: 'moveTo',
+		2: 'lineTo',
+		3: '',
+		4: 'curveTo',
+		79: 'closePath',
+}
+######
+# robofab point type to matplotlib path code maping
+# http://matplotlib.org/api/path_api.html
+
+pType2pCode = {
+	'stop' : 0,
+	'move' : 1,
+	'line' : 2,
+	# 'offcurve': 3,
+	'offcurve' : 3,
+	'curve' : 4,
+	'close' : 79,
+}
+
+main()

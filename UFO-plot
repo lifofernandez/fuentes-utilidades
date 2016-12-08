@@ -19,23 +19,6 @@ import matplotlib.patches as patches
 from matplotlib.collections import PatchCollection
 # http://matplotlib.org/api/CONTOURS_api.html#matplotlib.patches.PathPatch
 
-######
-# robofab point type to matplotlib path code maping
-# http://matplotlib.org/api/path_api.html
-
-pType2cCode = {
-	'stop': 0,
-	'move': 1,
-	'line': 2,
-	#'offcurve': 3,
-	'offcurve': 4,
-	'curve': 4,
-	'close': 79,
-}
-
-
-######
-# Args handling
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -53,12 +36,11 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-ufo_path = args.ufo_in
+# CONSTANTS
+ufo_path   = args.ufo_in
 glyph_name = args.glyph
 
 
-######
-# Font load and path plot
 def main():
 
 	font = RFont(ufo_path)
@@ -75,8 +57,8 @@ def main():
 			print '-----'
 			print "list of glyph names:", font.keys()
 			print '-----'
-	
-	
+
+
 	fig = figure()
 	ax = fig.add_subplot(
 		111,
@@ -85,16 +67,16 @@ def main():
 		# autoscale_on=False
 	)
 	glyph = font[glyph_name]
-	
+
 	plotear_glifo(
 		glyph,
 		ax,
 		font
 	)
-	
+
 	ax.grid()
 	ax.axis( 'equal' )
-	
+
 	show()
 
 def plotear_glifo(
@@ -104,17 +86,17 @@ def plotear_glifo(
 	offset = (0,0),
 	scale = (1,1)
 ):
-	
+
 	print 'Glyph:',self.name
 	print '* Contornos:',len( self.contours )
 	print '* + Components:',len( self.components)
 	print '* offset:',offset
 	print '* scale:',scale
 	print '* -----'
-	
+
 	CONTOURS = []
 	for contour in self:
-		
+
 		CODES = []
 		VERTS = []
 		for point in contour.points:
@@ -125,13 +107,13 @@ def plotear_glifo(
 				zip( pathVert, offset, scale )
 			]
 			VERTS.append( pathResultado );
-			
-			pathCode = pType2cCode[point.type]
+
+			pathCode = pType2pCode[point.type]
 			CODES.append( pathCode );
-			
+
 			if args.verbose:
 				print point.type+':', point.x, point.y
-		
+
 		path = Path(
 			VERTS,
 			CODES
@@ -142,7 +124,7 @@ def plotear_glifo(
 			alpha = 0.5
 		)
 		CONTOURS.append( patch )
-	
+
 	for component in self.components:
 		componentName   = component._baseGlyph
 		componentnGlyph = font[componentName]
@@ -156,7 +138,7 @@ def plotear_glifo(
 			v1, v2, in
 			zip( component._scale, scale )
 		]
-		
+
 		plotear_glifo(
 			componentnGlyph,
 			subplot,
@@ -164,11 +146,11 @@ def plotear_glifo(
 			componentOffset,
 			componentScale
 		)
-		
+
 		if args.verbose:
 			print vars(component)
-	
-	
+
+
 	collection = PatchCollection(
 		CONTOURS,
 		cmap  = matplotlib.cm.jet,
@@ -180,5 +162,19 @@ def plotear_glifo(
 	# )
 	subplot.add_collection( collection )
 
+
+######
+# robofab point type to matplotlib path code maping
+# http://matplotlib.org/api/path_api.html
+
+pType2pCode = {
+	'stop' : 0,
+	'move' : 1,
+	'line' : 2,
+	# 'offcurve': 3,
+	'offcurve' : 4,
+	'curve' : 4,
+	'close' : 79,
+}
 
 main()
