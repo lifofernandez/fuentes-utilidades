@@ -5,9 +5,9 @@ Ufo to DrawBot Paths
 Prints a a glyph in code than drawbot can run
 
 Usage:
-$ ./UFO-drawBot file.ufo glyph-name > somedrawbotcode.py
+$ ./UFO-drawBot file.ufo glyphname > somedrawbotcode.py
 
-por: lisandro fernandez
+by Lisandro Fernández
 
 """
 
@@ -104,8 +104,8 @@ def plotear_glifo(
 			elif CODIGOS[index] == 4: # NO curva
 
 				print pType2drawBotPath[CODIGOS[index]]+'('
-				print '  ',repr(VERTS[index-2])+', # cntrl pt 1'
-				print '  ',repr(VERTS[index-1])+', # cntrl pt 2'
+				print '  ',repr(VERTS[index-2])+', # ctrl pt 1'
+				print '  ',repr(VERTS[index-1])+', # ctrl pt 2'
 				print '  ',vertice
 				print ')'
 			else:
