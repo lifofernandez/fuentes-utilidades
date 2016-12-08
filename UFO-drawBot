@@ -7,7 +7,7 @@ Prints a a glyph in code than drawbot can run
 Usage:
 $ ./UFO-drawBot file.ufo glyphname > somedrawbotcode.py
 
-by Lisandro Fernández
+by Lisandro Fernandez
 
 """
 

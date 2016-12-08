@@ -156,10 +156,10 @@ def plotear_glifo(
 		cmap  = matplotlib.cm.jet,
 		alpha = 0.4
 	)
-	# colors = 100 * np.random.rand( len( CONTOURS ) )
-	# colection.set_array(
-	# 	np.array( colors )
-	# )
+	colors = 100 * np.random.rand( len( CONTOURS ) )
+	collection.set_array(
+		np.array( colors )
+	)
 	subplot.add_collection( collection )
 
 
