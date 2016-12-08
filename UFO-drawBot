@@ -16,27 +16,22 @@ import numpy as np
 import argparse, robofab, math, sys
 from robofab.world import RFont
 
-
-
-
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
 	"ufo_in",
-	help = "the ufo file to process"
+	help = "The ufo file to process"
 )
 parser.add_argument(
 	"glyph",
-	help = "the glyph to print for DrawBot"
+	help = "The glyph to print for DrawBot"
 )
 parser.add_argument(
 	"-v", "--verbose",
-	help = "increase output verbosity",
+	help = "Increase output verbosity",
 	action = "store_true"
 )
 args = parser.parse_args()
 
-# CONSTANTS
 ufo_path   = args.ufo_in
 glyph_name = args.glyph
 
@@ -52,13 +47,12 @@ def main():
 		print "# Font:",font.info.postscriptFullName
 		print '# Glyph:', glyph_name,'\n'
 		if args.verbose:
-			print "# the number of glyphs:", len(font)
-			print "# full name of this font:", font.info.postscriptFullName
-			print '# ascender:', font.info.ascender
-			print '# descender:', font.info.descender
-			print '#####'
-			print '# list of glyph names:', font.keys()
-			print '#####'
+			print "# The number of glyphs:", len(font)
+			print "# Full name of this font:", font.info.postscriptFullName
+			print '# Ascender:', font.info.ascender
+			print '# Descender:', font.info.descender,'\n'
+			print '# List of glyph names:', font.keys()
+			print '#####\n'
 
 
 	glyph = font[glyph_name]
@@ -78,11 +72,6 @@ def plotear_glifo(
 	offset = (0,0),
 	scale = (1,1)
 ):
-	# print '# Contornos:',len( self.contours )
-	# print '# + Components:',len( self.components)
-	# print '# offset:',offset
-	# print '# scale:',scale
-	# print '# -----'
 
 	CONTOURS = []
 	for contour in self:
@@ -90,7 +79,7 @@ def plotear_glifo(
 		CODIGOS = [] # para drawbot
 		VERTS = []
 		for point in contour.points:
-			# dirty fix: vertical offset
+			# Dirty fix for vertical offset
 			pathVert      = ( point.x, point.y + 200 ) 
 			pathResultado = tuple(
 				( v1 + v2 ) * v3 for
@@ -102,8 +91,8 @@ def plotear_glifo(
 			pathCode = pType2pCode[point.type]
 			CODIGOS.append( pathCode )
 		
-		# DroBote path string 
-		# Dirty and raw implemntation
+		# DroBote path string
+		# raw implemntation
 		print '# PATH', self.name, '#####'
 		print 'newPath()'
 		curveCounter = 0
