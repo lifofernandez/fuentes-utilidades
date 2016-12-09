@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 """ Glyph Plot
 
-Ufo to DrawBot Paths
-Prints a a glyph in code than drawbot can run
+UFO to DrawBot
+Prints a glyph in drawbot path instructions
 
 Usage:
 $ ./UFO-drawBot file.ufo glyphname > somedrawbotcode.py
@@ -91,17 +91,16 @@ def plotear_glifo(
 			pathCode = pType2pCode[point.type]
 			CODIGOS.append( pathCode )
 		
-		# DroBote path string
-		# raw implemntation
+		# drawBot path printing (raw aproach)
 		print '# PATH', self.name, '#####'
 		print 'newPath()'
-		curveCounter = 0
+		ctrlCounter = 0
 		for index, vertice in enumerate(VERTS):
 			if CODIGOS[index] == 3: # NO curva
-				curveCounter += 1
+				ctrlCounter += 1
 			# curveOrder = curveCounter % 2 
 			# print vertice, '# control', curveOrder
-			elif CODIGOS[index] == 4: # NO curva
+			elif CODIGOS[index] == 4: # curva
 
 				print pType2drawBotPath[CODIGOS[index]]+'('
 				print '  ',repr(VERTS[index-2])+', # ctrl pt 1'
