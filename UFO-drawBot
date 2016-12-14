@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 """ Glyph Plot
-
 UFO to DrawBot
 Prints a glyph in drawbot path instructions
-
 Usage:
 $ ./UFO-drawBot file.ufo glyphname > somedrawbotcode.py
-
-by Lisandro Fernandez
 
 """
 
@@ -72,6 +68,9 @@ def plotear_glifo(
 	offset = (0,0),
 	scale = (1,1)
 ):
+	for aPt in self[0].bPoints:
+		print aPt
+		print aPt.bcpIn, aPt.bcpOut, aPt.anchor
 
 	CONTOURS = []
 	for contour in self:
@@ -96,15 +95,14 @@ def plotear_glifo(
 		print 'newPath()'
 		ctrlCounter = 0
 		for index, vertice in enumerate(VERTS):
-			if CODIGOS[index] == 3: # NO curva
+			if CODIGOS[index] == 3: 
 				ctrlCounter += 1
 			# curveOrder = curveCounter % 2 
-			# print vertice, '# control', curveOrder
 			elif CODIGOS[index] == 4: # curva
 
 				print pType2drawBotPath[CODIGOS[index]]+'('
-				print '  ',repr(VERTS[index-2])+', # ctrl pt 1'
-				print '  ',repr(VERTS[index-1])+', # ctrl pt 2'
+				print '  ',repr( VERTS[index-2] )+', # ctrl pt 1'
+				print '  ',repr( VERTS[index-1] )+', # ctrl pt 2'
 				print '  ',vertice
 				print ')'
 			else:
